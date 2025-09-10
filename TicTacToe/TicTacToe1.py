@@ -4,7 +4,7 @@ import sys
 # 1. rewrite the code under the class setting
 # 2. add alpha-beta pruning
 # 3. Monte Carlo Tree Search
-##################################### 
+######################################
 
 WIN_LINES = [
     [(0,0),(0,1),(0,2)],  # rows
@@ -79,6 +79,9 @@ class GameBoard:
 
 
         moves = [(r,c) for r in range(3) for c in range(3) if bd[r][c]==0] # all possible position where the board is empty
+        #So if these are valid moves then could we make the inverse of this containing all positons where the board is not empty then
+        #When they input a move we can check if it is in illegal moves before we do anything
+        #Or should we just check if the move isnt in the moves list then it must be an illegal move
         player = self.check_nextplayer(bd)
         
 
@@ -114,7 +117,7 @@ class TicTacToeGame:
 
         self.gameboard = GameBoard()
         self.turn = 1
-        self.turnnumber = 1
+        self.turnnumber = 0
 
 
     def playturn(self):
@@ -123,12 +126,34 @@ class TicTacToeGame:
         
         self.gameboard.print_bd()
 
+        print(self.turnnumber)
+        legal_moves = [(r,c) for r in range(3) for c in range(3) if self.gameboard != 0]
+        
+
         if self.turn == 1:
             print("Human, please choose a space!")
             validinput = False
-            
-            user_input = input("Enter two numbers separated by a comma: ")
-            humanrow, humancol = map(int, map(str.strip, user_input.split(',')))
+            print(legal_moves)
+            while not validinput:
+                user_input = input("Enter two numbers separated by a comma: ")
+                # legal_moves = [(r,c) for r in range(3) for c in range(3) if self.gameboard != 0]
+                # print(legal_moves)
+                if user_input[0].isnumeric() and user_input[-1].isnumeric():
+                    user_input = tuple(map(int,(user_input.replace(',',''))))
+                    print(f' user input', user_input[0],user_input[1])
+                    if user_input in legal_moves:
+                        humanrow, humancol = user_input[0], user_input[1]
+                        print((humanrow,humancol))
+                        if (humanrow,humancol) in legal_moves:
+                            validinput = True
+                else:
+                    print('Please try again you moron')
+            print(f'Should remove,', user_input)
+            print(type(legal_moves[0]))
+            for indicies in legal_moves:
+                if indicies == (humanrow,humancol):
+                    print(f'removed ',indicies)
+                    legal_moves.remove(indicies)
             self.gameboard.entries[humanrow][humancol] = 1
             self.turn = 2
         else:
