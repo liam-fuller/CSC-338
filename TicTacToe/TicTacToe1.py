@@ -133,29 +133,26 @@ class TicTacToeGame:
         if self.turn == 1:
             print("Human, please choose a space!")
             validinput = False
-            print(legal_moves)
-            while not validinput:
-                user_input = input("Enter two numbers separated by a comma: ")
-                # legal_moves = [(r,c) for r in range(3) for c in range(3) if self.gameboard != 0]
-                # print(legal_moves)
-                if user_input[0].isnumeric() and user_input[-1].isnumeric():
-                    user_input = tuple(map(int,(user_input.replace(',',''))))
-                    print(f' user input', user_input[0],user_input[1])
-                    if user_input in legal_moves:
-                        humanrow, humancol = user_input[0], user_input[1]
-                        print((humanrow,humancol))
-                        if (humanrow,humancol) in legal_moves:
-                            validinput = True
+            # print(legal_moves)
+            legal_moves = [(r, c) for r in range(3) for c in range(3) if self.gameboard.entries[r][c] == 0]
+            # print("Available moves:", legal_moves)
+
+        while not validinput:
+            user_input = input("Enter two numbers separated by a comma (row,col): ")
+
+            try:
+                move = tuple(map(int, user_input.split(',')))
+
+                if move in legal_moves:
+                    humanrow, humancol = move
+                    self.gameboard.entries[humanrow][humancol] = 1
+                    validinput = True
                 else:
-                    print('Please try again you moron')
-            print(f'Should remove,', user_input)
-            print(type(legal_moves[0]))
-            for indicies in legal_moves:
-                if indicies == (humanrow,humancol):
-                    print(f'removed ',indicies)
-                    legal_moves.remove(indicies)
-            self.gameboard.entries[humanrow][humancol] = 1
-            self.turn = 2
+                    print("That space is already taken or invalid. Try again.")
+
+            except Exception:
+                print("Invalid input. Please use format: row,col (e.g. 1,2)")
+
         else:
             print("AI is thinking...")
             move, score = self.gameboard.minmax(self.gameboard.entries)
