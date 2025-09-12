@@ -156,9 +156,13 @@ class TicTacToeGame:
         else:
             print("AI is thinking...")
             move, score = self.gameboard.minmax(self.gameboard.entries)
+            if move is None:
+                print("No valid moves left.")
+                return  # don’t try to play a move
             print("AI chooses move: ", move, " with score: ", score)
             self.gameboard.entries[move[0]][move[1]] = 2
             self.turn = 1
+
 
 
 
